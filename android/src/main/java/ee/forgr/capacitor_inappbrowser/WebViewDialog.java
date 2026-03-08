@@ -1225,8 +1225,19 @@ public class WebViewDialog extends Dialog {
             // Avoid double-applying top inset; AppBar/status bar handled above on Android 15+
             mlp.topMargin = isAndroid15Plus ? 0 : navTop;
 
-            // Apply larger of navigation bar or keyboard inset to bottom margin
-            mlp.bottomMargin = Math.max(navBottom, ime.bottom);
+            // Instead of bottom margin (which doesn't affect CSS 100vh), set an
+            // explicit height so the WebView's layout viewport shrinks and 100vh
+            // resolves to the actual visible area.
+            int bottomInset = Math.max(navBottom, ime.bottom);
+            View parent = (View) v.getParent();
+            if (parent != null && parent.getHeight() > 0) {
+                int topInset = mlp.topMargin;
+                mlp.height = parent.getHeight() - topInset - bottomInset;
+                mlp.bottomMargin = 0;
+            } else {
+                // Fallback: parent not yet measured, use margin approach
+                mlp.bottomMargin = bottomInset;
+            }
 
             mlp.leftMargin = bars.left;
             mlp.rightMargin = bars.right;
