@@ -1229,10 +1229,10 @@ public class WebViewDialog extends Dialog {
             // explicit height so the WebView's layout viewport shrinks and 100vh
             // resolves to the actual visible area.
             int bottomInset = Math.max(navBottom, ime.bottom);
-            View parent = (View) v.getParent();
-            if (parent != null && parent.getHeight() > 0) {
+            View parentView = (View) v.getParent();
+            if (parentView != null && parentView.getHeight() > 0) {
                 int topInset = mlp.topMargin;
-                mlp.height = parent.getHeight() - topInset - bottomInset;
+                mlp.height = parentView.getHeight() - topInset - bottomInset;
                 mlp.bottomMargin = 0;
             } else {
                 // Fallback: parent not yet measured, use margin approach
